@@ -60,6 +60,7 @@ void MCQ::test()
     {
         std::cout << option << '.' << context << std::endl;
     }
+    std::cout << std::endl;
     bool is_correct = false;
     while (true)
     {
