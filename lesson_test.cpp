@@ -80,7 +80,7 @@ void MCQ::test()
         }
         else
         {
-            std::cout << "你没有输入任何字符，请重新输入：";
+            std::cout << "你没有输入任何字符" << std::endl << std::endl;
         }
         if (is_correct)
         {
