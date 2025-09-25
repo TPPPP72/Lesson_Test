@@ -10,6 +10,10 @@ std::string read()
 {
     std::string str;
     std::getline(std::cin, str);
+    if (str.empty())
+    {
+        return "";
+    }
     while (true)
     {
         auto back = str.back();
