@@ -49,7 +49,7 @@ class CRP
     std::vector<std::string> get_real_output(); // 获取实际输出的每一行
     std::string origin_code;                    // 展示给测试者的代码
     std::string input;                          // 模拟程序输入
-    std::string ans;                            // 答案
+    std::string answer;                         // 答案
     std::string hint;                           // 提示
     std::string solution;                       // 解析
     std::function<void()> f;                    // 程序内部的代码（请使用 cout 输出）
@@ -72,14 +72,14 @@ class InteractTester
         MCQ,
         CRP
     };
-    std::string title;                   // 测试标题
-    void set_console_utf8();             // 设置控制台编码为 UTF-8
-    question_type query(int id);         // 通过题目编号查询题目类型
-    std::vector<MCQ> mcq;                // 存储mcq
-    std::vector<CRP> crp;                // 存储crp
-    std::vector<question_type> type_vec; // 存储每个编号的题目类型
-    int question_num;                    // 存储题目总数
-    int mcq_index = 0;                   // mcq题目的下标
-    int crp_index = 0;                   // crp题目的下标
+    std::string title;                      // 测试标题
+    void set_console_utf8();                // 设置控制台编码为 UTF-8
+    question_type query(int id);            // 通过题目编号查询题目类型
+    std::vector<MCQ> mcq;                   // 存储mcq
+    std::vector<CRP> crp;                   // 存储crp
+    std::vector<question_type> type_vector; // 存储每个编号的题目类型
+    int question_num;                       // 存储题目总数
+    int mcq_index = 0;                      // mcq题目的下标
+    int crp_index = 0;                      // crp题目的下标
 };
 }; // namespace Lesson_Test

@@ -13,10 +13,9 @@ int main()
     {
         std::unique_ptr<MCQ> mcq = std::make_unique<MCQ>();
         mcq->set_question("2 ^ 3 + 2 ^ 0 = ?");               // 设置题面 必须
-        mcq->add_option('A', "9");                            // 添加选项 必须
-        mcq->add_option('B', "8");                            // 添加选项 必须
-        mcq->add_option('C', "1");                            // 添加选项 必须
-        mcq->set_ans('A');                                    // 设置答案 必须
+        mcq->add_option("9", true);                           // 添加选项 必须
+        mcq->add_option("8");                                 // 添加选项 必须
+        mcq->add_option("1");                                 // 添加选项 必须
         mcq->set_hint("x ^ 0 = 1");                           // 设置提示 可选
         mcq->set_solution("2 ^ 3 = 8, 2 ^ 0 = 1, 8 + 1 = 9"); // 设置解析 可选
         tester.add_question(*mcq);                            // 向测试器添加该题目 必须

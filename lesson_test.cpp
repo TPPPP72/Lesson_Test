@@ -131,7 +131,7 @@ void CRP::set_real_output(const std::function<void()> &f)
 
 void CRP::set_real_output(std::string_view s)
 {
-    this->ans = s;
+    this->answer = s;
 }
 
 void CRP::run_and_capture()
@@ -140,12 +140,12 @@ void CRP::run_and_capture()
     std::streambuf *oldBuf = std::cout.rdbuf(oss.rdbuf());
     this->f();
     std::cout.rdbuf(oldBuf);
-    this->ans = oss.str();
+    this->answer = oss.str();
 }
 
 std::vector<std::string> CRP::get_real_output()
 {
-    std::istringstream iss(ans);
+    std::istringstream iss(answer);
     std::vector<std::string> realLines;
     std::string line;
     while (std::getline(iss, line))
@@ -218,7 +218,7 @@ void InteractTester::set_console_utf8()
 
 InteractTester::question_type InteractTester::query(int id)
 {
-    return type_vec[id - 1];
+    return type_vector[id - 1];
 }
 
 InteractTester::InteractTester()
@@ -237,14 +237,14 @@ void InteractTester::set_title(std::string_view s)
 void InteractTester::add_question(const MCQ &mcq)
 {
     this->mcq.emplace_back(mcq);
-    type_vec.emplace_back(question_type::MCQ);
+    type_vector.emplace_back(question_type::MCQ);
     ++this->question_num;
 }
 
 void InteractTester::add_question(const CRP &crp)
 {
     this->crp.emplace_back(crp);
-    type_vec.emplace_back(question_type::CRP);
+    type_vector.emplace_back(question_type::CRP);
     ++this->question_num;
 }
 
