@@ -53,11 +53,12 @@ class CRP
 class InteractTester
 {
   public:
-    InteractTester();
-    void set_title(std::string_view s);
-    void add_question(const MCQ &mcq); // 添加选择题
-    void add_question(const CRP &crp); // 添加阅读代码题
-    void test();                       // 运行测试
+    InteractTester(); // 重写 InteractTester 构造函数
+    ~InteractTester() = default;
+    void set_title(std::string_view s); // 设置测试标题
+    void add_question(const MCQ &mcq);  // 添加选择题
+    void add_question(const CRP &crp);  // 添加阅读代码题
+    void test();                        // 运行测试
 
   private:
     enum class question_type
@@ -65,7 +66,7 @@ class InteractTester
         MCQ,
         CRP
     };
-    std::string title;
+    std::string title;                   // 测试标题
     void set_console_utf8();             // 设置控制台编码为 UTF-8
     question_type query(int id);         // 通过题目编号查询题目类型
     std::vector<MCQ> mcq;                // 存储mcq
