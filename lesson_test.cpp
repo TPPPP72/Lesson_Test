@@ -1,7 +1,9 @@
 #include "lesson_test.h"
 #include <iostream>
 #include <sstream>
+#if _WIN32
 #include <windows.h>
+#endif
 
 namespace Lesson_Test
 {
@@ -211,8 +213,10 @@ void CRP::test()
 
 void InteractTester::set_console_utf8()
 {
+#if _WIN32
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
+#endif
 }
 
 InteractTester::question_type InteractTester::query(int id)
@@ -222,7 +226,9 @@ InteractTester::question_type InteractTester::query(int id)
 
 InteractTester::InteractTester()
 {
+#if _WIN32
     this->set_console_utf8();
+#endif
     this->question_num = 0;
 }
 
