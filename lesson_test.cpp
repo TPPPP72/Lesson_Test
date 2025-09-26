@@ -99,7 +99,7 @@ void MCQ::test()
     }
     if (!this->solution.empty())
     {
-        std::cout << "解析：" << this->solution << std::endl << std::endl;
+        std::cout << "📝 解析：" << this->solution << std::endl << std::endl;
     }
 }
 
@@ -204,7 +204,7 @@ void CRP::test()
     }
     if (!this->solution.empty())
     {
-        std::cout << "解析：" << this->solution << std::endl << std::endl;
+        std::cout << "📝 解析：" << this->solution << std::endl << std::endl;
     }
 }
 
