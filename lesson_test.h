@@ -62,8 +62,8 @@ class InteractTester
     InteractTester(); // 重写 InteractTester 构造函数
     ~InteractTester() = default;
     void set_title(std::string_view s); // 设置测试标题
-    void add_question(const MCQ &mcq);  // 添加选择题
-    void add_question(const CRP &crp);  // 添加阅读代码题
+    void add(MCQ &mcq);                 // 添加选择题
+    void add(CRP &crp);                 // 添加阅读代码题
     void test();                        // 运行测试
 
   private:

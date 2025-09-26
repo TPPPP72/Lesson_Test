@@ -18,7 +18,7 @@ int main()
         mcq->add_option("1");                                 // 添加选项 必须
         mcq->set_hint("x ^ 0 = 1");                           // 设置提示 可选
         mcq->set_solution("2 ^ 3 = 8, 2 ^ 0 = 1, 8 + 1 = 9"); // 设置解析 可选
-        tester.add_question(*mcq);                            // 向测试器添加该题目 必须
+        tester.add(*mcq);                                     // 向测试器添加该题目 必须
     }
 
     // 阅读代码题样例
@@ -43,7 +43,7 @@ int main()
         crp->set_input("2 3");                                          // 设置输入 可选
         crp->set_hint("cin 可以从控制台读入数据");                      // 设置提示 可选
         crp->set_solution("输入 2 3 ，即 a = 2， b = 3，显然答案为 5"); // 设置解析 可选
-        tester.add_question(*crp);                                      // 向测试器添加该题目 必须
+        tester.add(*crp);                                               // 向测试器添加该题目 必须
     }
 
     tester.test(); // 开始测试

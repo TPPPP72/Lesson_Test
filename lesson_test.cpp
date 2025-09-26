@@ -234,16 +234,16 @@ void InteractTester::set_title(std::string_view s)
     this->title = s;
 }
 
-void InteractTester::add_question(const MCQ &mcq)
+void InteractTester::add_question(MCQ &mcq)
 {
-    this->mcq.emplace_back(mcq);
+    this->mcq.emplace_back(std::move(mcq));
     type_vector.emplace_back(question_type::MCQ);
     ++this->question_num;
 }
 
-void InteractTester::add_question(const CRP &crp)
+void InteractTester::add_question(CRP &crp)
 {
-    this->crp.emplace_back(crp);
+    this->crp.emplace_back(std::move(crp));
     type_vector.emplace_back(question_type::CRP);
     ++this->question_num;
 }
