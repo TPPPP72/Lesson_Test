@@ -8,4 +8,4 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 
 file(GLOB SRC_FILES *.cpp)
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} main.cpp)
+add_executable(${PROJECT_NAME} ${SRC_FILES})
