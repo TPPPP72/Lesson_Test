@@ -15,11 +15,11 @@ class MCQ
   public:
     MCQ() = default;
     ~MCQ() = default;
-    void set_question(std::string_view s);                             // 设置问题
-    void add_option(std::string_view context, bool is_answer = false); // 添加选项
-    void set_hint(std::string_view s);                                 // 设置提示
-    void set_solution(std::string_view s);                             // 设置解析
-    void test();                                                       // 用于测试的函数
+    void set_question(std::string_view text);                       // 设置问题
+    void add_option(std::string_view text, bool is_answer = false); // 添加选项
+    void set_hint(std::string_view text);                           // 设置提示
+    void set_solution(std::string_view text);                       // 设置解析
+    void test();                                                    // 用于测试的函数
 
   private:
     std::string question;             // 问题
@@ -36,13 +36,13 @@ class CRP
   public:
     CRP() = default;
     ~CRP() = default;
-    void set_origin_code(std::string_view s);             // 设置展示给测试者的代码
-    void set_input(std::string_view s);                   // 设置输入
-    void set_real_output(const std::function<void()> &f); // 设置真实的输出
-    void set_real_output(std::string_view s);             // 设置真实的输出（重载）
-    void set_hint(std::string_view s);                    // 设置提示
-    void set_solution(std::string_view s);                // 设置解析
-    void test();                                          // 用于测试的函数
+    void set_origin_code(std::string_view text);                 // 设置展示给测试者的代码
+    void set_input(std::string_view text);                       // 设置输入
+    void set_real_output(const std::function<void()> &function); // 设置真实的输出
+    void set_real_output(std::string_view text);                 // 设置真实的输出（重载）
+    void set_hint(std::string_view text);                        // 设置提示
+    void set_solution(std::string_view text);                    // 设置解析
+    void test();                                                 // 用于测试的函数
 
   private:
     void run_and_capture();                     // 运行 f ，并捕获真实输出
@@ -78,7 +78,7 @@ class InteractTester
     std::vector<MCQ> mcq;                   // 存储mcq
     std::vector<CRP> crp;                   // 存储crp
     std::vector<question_type> type_vector; // 存储每个编号的题目类型
-    int question_num;                       // 存储题目总数
+    int question_number;                    // 存储题目总数
     int mcq_index = 0;                      // mcq题目的下标
     int crp_index = 0;                      // crp题目的下标
 };

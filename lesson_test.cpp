@@ -25,24 +25,24 @@ std::string read()
     return str;
 }
 
-void MCQ::set_question(std::string_view s)
+void MCQ::set_question(std::string_view text)
 {
-    this->question = s;
+    this->question = text;
 }
 
-void MCQ::set_hint(std::string_view s)
+void MCQ::set_hint(std::string_view text)
 {
-    this->hint = s;
+    this->hint = text;
 }
 
-void MCQ::set_solution(std::string_view s)
+void MCQ::set_solution(std::string_view text)
 {
-    this->solution = s;
+    this->solution = text;
 }
 
-void MCQ::add_option(std::string_view context, bool is_answer)
+void MCQ::add_option(std::string_view text, bool is_answer)
 {
-    options.emplace_back(context);
+    options.emplace_back(text);
     if (is_answer)
     {
         this->answer = static_cast<char>('A' + index);
@@ -103,35 +103,35 @@ void MCQ::test()
     }
 }
 
-void CRP::set_origin_code(std::string_view s)
+void CRP::set_origin_code(std::string_view text)
 {
-    this->origin_code = s;
+    this->origin_code = text;
 }
 
-void CRP::set_input(std::string_view s)
+void CRP::set_input(std::string_view text)
 {
-    this->input = s;
+    this->input = text;
 }
 
-void CRP::set_solution(std::string_view s)
+void CRP::set_solution(std::string_view text)
 {
-    this->solution = s;
+    this->solution = text;
 }
 
-void CRP::set_hint(std::string_view s)
+void CRP::set_hint(std::string_view text)
 {
-    this->hint = s;
+    this->hint = text;
 }
 
-void CRP::set_real_output(const std::function<void()> &f)
+void CRP::set_real_output(const std::function<void()> &function)
 {
-    this->f = f;
+    this->f = function;
     this->run_and_capture();
 }
 
-void CRP::set_real_output(std::string_view s)
+void CRP::set_real_output(std::string_view text)
 {
-    this->answer = s;
+    this->answer = text;
 }
 
 void CRP::run_and_capture()
@@ -226,26 +226,26 @@ InteractTester::InteractTester()
 #if _WIN32
     this->set_console_utf8();
 #endif
-    this->question_num = 0;
+    this->question_number = 0;
 }
 
-void InteractTester::set_title(std::string_view s)
+void InteractTester::set_title(std::string_view text)
 {
-    this->title = s;
+    this->title = text;
 }
 
 void InteractTester::add(MCQ &mcq)
 {
     this->mcq.emplace_back(std::move(mcq));
     type_vector.emplace_back(question_type::MCQ);
-    ++this->question_num;
+    ++this->question_number;
 }
 
 void InteractTester::add(CRP &crp)
 {
     this->crp.emplace_back(std::move(crp));
     type_vector.emplace_back(question_type::CRP);
-    ++this->question_num;
+    ++this->question_number;
 }
 
 void InteractTester::test()
@@ -254,9 +254,9 @@ void InteractTester::test()
     {
         std::cout << "😀 欢迎来到 " << title << " 测试程序!" << std::endl;
     }
-    std::cout << "本次测试共有 " << question_num << " 道题目" << std::endl << std::endl;
+    std::cout << "本次测试共有 " << question_number << " 道题目" << std::endl << std::endl;
     int id = 1;
-    while (id <= this->question_num)
+    while (id <= this->question_number)
     {
         std::cout << "第 " << id << " 题：" << std::endl << std::endl;
         auto type = this->query(id);
