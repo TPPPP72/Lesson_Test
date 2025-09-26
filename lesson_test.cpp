@@ -10,11 +10,7 @@ std::string read()
 {
     std::string str;
     std::getline(std::cin, str);
-    if (str.empty())
-    {
-        return "";
-    }
-    while (true)
+    while (!str.empty())
     {
         auto back = str.back();
         if (back == '\n' || back == '\t' || back == ' ')
