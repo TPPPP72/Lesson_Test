@@ -40,33 +40,30 @@ void MCQ::set_solution(std::string_view s)
     this->solution = s;
 }
 
-void MCQ::add_option(const option &op)
+void MCQ::add_option(std::string_view context, bool is_answer)
 {
-    this->options.emplace_back(op);
-}
-
-void MCQ::add_option(char op, std::string_view context)
-{
-    this->add_option((option){op, context});
-}
-
-void MCQ::set_ans(char c)
-{
-    this->ans = c;
+    options.emplace_back(context);
+    if (is_answer)
+    {
+        this->answer = static_cast<char>('A' + index);
+    }
+    ++this->index;
 }
 
 void MCQ::test()
 {
-    if (this->ans == 0)
+    if (this->answer == 0)
     {
         std::cout << "严重错误：未设定答案选项" << std::endl;
         return;
     }
     std::cout << this->question << std::endl << std::endl;
     std::cout << "选项：" << std::endl;
-    for (const auto &[option, context] : this->options)
+    int index = 0;
+    for (const auto context : this->options)
     {
-        std::cout << option << '.' << context << std::endl;
+        std::cout << static_cast<char>('A' + index) << '.' << context << std::endl;
+        ++index;
     }
     std::cout << std::endl;
     if (!this->hint.empty())
@@ -81,7 +78,7 @@ void MCQ::test()
         if (user_input.length() >= 1)
         {
             char user_ans = user_input[0];
-            if (std::toupper(user_ans) == this->ans)
+            if (std::toupper(user_ans) == this->answer)
             {
                 is_correct = true;
                 std::cout << "✅ 正确" << std::endl << std::endl;

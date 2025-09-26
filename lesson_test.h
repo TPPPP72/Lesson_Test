@@ -15,21 +15,19 @@ class MCQ
   public:
     MCQ() = default;
     ~MCQ() = default;
-    using option = std::pair<char, std::string>;        // 设置选项别名
-    void set_question(std::string_view s);              // 设置问题
-    void add_option(const option &op);                  // 添加选项
-    void add_option(char op, std::string_view context); // 添加选项（重载）
-    void set_ans(char c);                               // 设置答案
-    void set_hint(std::string_view s);                  // 设置提示
-    void set_solution(std::string_view s);              // 设置解析                                      // //
-    void test();                                        // 用于测试的函数
+    void set_question(std::string_view s);                             // 设置问题
+    void add_option(std::string_view context, bool is_answer = false); // 添加选项
+    void set_hint(std::string_view s);                                 // 设置提示
+    void set_solution(std::string_view s);                             // 设置解析
+    void test();                                                       // 用于测试的函数
 
   private:
-    std::string question;        // 问题
-    std::vector<option> options; // 选项
-    std::string hint;            // 提示
-    std::string solution;        // 解析
-    char ans;                    // 答案
+    std::string question;             // 问题
+    std::vector<std::string> options; // 选项
+    std::string hint;                 // 提示
+    std::string solution;             // 解析
+    char answer;                      // 答案
+    int index = 0;                    // 选项偏移值
 };
 
 // CRP = Code Reading Problem 阅读代码题
@@ -43,7 +41,7 @@ class CRP
     void set_real_output(const std::function<void()> &f); // 设置真实的输出
     void set_real_output(std::string_view s);             // 设置真实的输出（重载）
     void set_hint(std::string_view s);                    // 设置提示
-    void set_solution(std::string_view s);                // 设置解析                                      // //
+    void set_solution(std::string_view s);                // 设置解析
     void test();                                          // 用于测试的函数
 
   private:
