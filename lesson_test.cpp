@@ -68,7 +68,7 @@ void MCQ::test()
     std::cout << std::endl;
     if (!this->hint.empty())
     {
-        std::cout << "提示：" << hint << std::endl << std::endl;
+        std::cout << "ℹ️ 提示：" << hint << std::endl << std::endl;
     }
     bool is_correct = false;
     while (true)
@@ -173,7 +173,7 @@ void CRP::test()
 
         if (!this->hint.empty())
         {
-            std::cout << "提示：" << hint << std::endl << std::endl;
+            std::cout << "ℹ️ 提示：" << hint << std::endl << std::endl;
         }
 
         std::cout << "程序应该输出：" << std::endl;
