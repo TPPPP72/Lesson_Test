@@ -102,6 +102,11 @@ void CRP::set_real_output(const std::function<void()> &f)
     this->run_and_capture();
 }
 
+void CRP::set_real_output(std::string_view s)
+{
+    this->ans = s;
+}
+
 void CRP::run_and_capture()
 {
     std::ostringstream oss;

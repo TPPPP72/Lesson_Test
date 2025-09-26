@@ -36,8 +36,9 @@ class CRP
     ~CRP() = default;
     void set_origin_code(std::string_view s);             // 设置展示给测试者的代码
     void set_input(std::string_view s);                   // 设置输入
-    void set_real_output(const std::function<void()> &f); // 程序内部的输出函数
-    void test();                                          // 用于测试的函数
+    void set_real_output(const std::function<void()> &f); // 设置真实的输出
+    void set_real_output(std::string_view s); // 设置真实的输出（重载）                                        //
+    void test();                              // 用于测试的函数
 
   private:
     void run_and_capture();                     // 运行 f ，并捕获真实输出
