@@ -28,6 +28,16 @@ void MCQ::set_question(std::string_view s)
     this->question = s;
 }
 
+void MCQ::set_hint(std::string_view s)
+{
+    this->hint = s;
+}
+
+void MCQ::set_solution(std::string_view s)
+{
+    this->solution = s;
+}
+
 void MCQ::add_option(const option &op)
 {
     this->options.emplace_back(op);
@@ -57,6 +67,10 @@ void MCQ::test()
         std::cout << option << '.' << context << std::endl;
     }
     std::cout << std::endl;
+    if (!this->hint.empty())
+    {
+        std::cout << "提示：" << hint << std::endl << std::endl;
+    }
     bool is_correct = false;
     while (true)
     {
@@ -84,6 +98,10 @@ void MCQ::test()
             break;
         }
     }
+    if (!this->solution.empty())
+    {
+        std::cout << "解析：" << this->solution << std::endl << std::endl;
+    }
 }
 
 void CRP::set_origin_code(std::string_view s)
@@ -94,6 +112,16 @@ void CRP::set_origin_code(std::string_view s)
 void CRP::set_input(std::string_view s)
 {
     this->input = s;
+}
+
+void CRP::set_solution(std::string_view s)
+{
+    this->solution = s;
+}
+
+void CRP::set_hint(std::string_view s)
+{
+    this->hint = s;
 }
 
 void CRP::set_real_output(const std::function<void()> &f)
@@ -144,6 +172,11 @@ void CRP::test()
             std::cout << input << std::endl << std::endl;
         }
 
+        if (!this->hint.empty())
+        {
+            std::cout << "提示：" << hint << std::endl << std::endl;
+        }
+
         std::cout << "程序应该输出：" << std::endl;
 
         bool allCorrect = true;
@@ -169,6 +202,10 @@ void CRP::test()
             break;
         }
         ++attempt;
+    }
+    if (!this->solution.empty())
+    {
+        std::cout << "解析：" << this->solution << std::endl << std::endl;
     }
 }
 
