@@ -234,14 +234,14 @@ void InteractTester::set_title(std::string_view s)
     this->title = s;
 }
 
-void InteractTester::add_question(MCQ &mcq)
+void InteractTester::add(MCQ &mcq)
 {
     this->mcq.emplace_back(std::move(mcq));
     type_vector.emplace_back(question_type::MCQ);
     ++this->question_num;
 }
 
-void InteractTester::add_question(CRP &crp)
+void InteractTester::add(CRP &crp)
 {
     this->crp.emplace_back(std::move(crp));
     type_vector.emplace_back(question_type::CRP);
@@ -270,7 +270,6 @@ void InteractTester::test()
             this->crp[crp_index].test();
             ++crp_index;
         }
-        std::cout << "第 " << id << " 题正确！" << std::endl << std::endl;
         ++id;
     }
     std::cout << "🎉 恭喜通过所有测试！ 按回车键退出程序" << std::endl;
