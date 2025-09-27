@@ -229,9 +229,9 @@ InteractTester::InteractTester()
     this->question_number = 0;
 }
 
-void InteractTester::set_title(std::string_view text)
+InteractTester::InteractTester(std::string_view title)
 {
-    this->title = text;
+    this->title = title;
 }
 
 void InteractTester::add(MCQ &mcq)

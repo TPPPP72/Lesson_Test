@@ -5,8 +5,7 @@ int main()
 {
     using namespace Lesson_Test;
 
-    InteractTester tester;
-    tester.set_title("测试章节"); // 可选
+    InteractTester tester{"测试章节"};
 
     // 选择题样例
     MCQ q1;
