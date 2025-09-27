@@ -19,15 +19,16 @@ class MCQ
     void add_option(std::string_view text, bool is_answer = false); // 添加选项
     void set_hint(std::string_view text);                           // 设置提示
     void set_solution(std::string_view text);                       // 设置解析
-    void test();                                                    // 用于测试的函数
 
   private:
+    void test();                      // 用于测试的函数
     std::string question;             // 问题
     std::vector<std::string> options; // 选项
     std::string hint;                 // 提示
     std::string solution;             // 解析
     char answer;                      // 答案
     int index = 0;                    // 选项偏移值
+    friend class InteractTester;
 };
 
 // CRP = Code Reading Problem 阅读代码题
@@ -42,9 +43,9 @@ class CRP
     void set_real_output(std::string_view text);                 // 设置真实的输出（重载）
     void set_hint(std::string_view text);                        // 设置提示
     void set_solution(std::string_view text);                    // 设置解析
-    void test();                                                 // 用于测试的函数
 
   private:
+    void test();                                // 用于测试的函数
     void run_and_capture();                     // 运行 f ，并捕获真实输出
     std::vector<std::string> get_real_output(); // 获取实际输出的每一行
     std::string origin_code;                    // 展示给测试者的代码
@@ -53,6 +54,7 @@ class CRP
     std::string hint;                           // 提示
     std::string solution;                       // 解析
     std::function<void()> f;                    // 程序内部的代码（请使用 cout 输出）
+    friend class InteractTester;
 };
 
 // 交互测试类
