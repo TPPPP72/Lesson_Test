@@ -231,7 +231,7 @@ InteractTester::InteractTester(std::string_view title)
     this->set_console_utf8();
 #endif
     this->question_number = 0;
-    this->title = title;
+    this->title = std::string{title};
 }
 
 void InteractTester::add(MCQ &&mcq)
