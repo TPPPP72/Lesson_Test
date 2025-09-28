@@ -1,6 +1,8 @@
 #include "lesson_test.h"
+#include <algorithm>
 #include <iostream>
 #include <sstream>
+
 #if _WIN32
 #include <windows.h>
 #endif
@@ -25,60 +27,57 @@ std::string read()
     return str;
 }
 
-void MCQ::set_question(std::string_view text)
+MCQ::MCQ(std::string_view question, std::vector<std::pair<std::string_view, bool>> &&options, std::string_view hint,
+         std::string_view solution)
 {
-    this->question = text;
-}
-
-void MCQ::set_hint(std::string_view text)
-{
-    this->hint = text;
-}
-
-void MCQ::set_solution(std::string_view text)
-{
-    this->solution = text;
-}
-
-void MCQ::add_option(std::string_view text, bool is_answer)
-{
-    options.emplace_back(text);
-    if (is_answer)
+    this->info.question = std::string{question};
+    std::size_t index = 0;
+    for (const auto &[text, is_answer] : options)
     {
-        this->answer = static_cast<char>('A' + index);
+        this->info.options.emplace_back(std::string{text});
+        if (is_answer)
+        {
+            this->info.answer += static_cast<char>('A' + index);
+        }
+        ++index;
     }
-    ++this->index;
+    this->info.hint = std::string{hint};
+    this->info.solution = std::string{solution};
 }
 
 void MCQ::run()
 {
-    if (this->answer == 0)
+    if (this->info.answer.empty())
     {
         std::cout << "严重错误：未设定答案选项" << std::endl;
         return;
     }
-    std::cout << this->question << std::endl << std::endl;
+    std::cout << this->info.question << std::endl << std::endl;
     std::cout << "选项：" << std::endl;
-    int index = 0;
-    for (const auto context : this->options)
+    std::size_t index = 0;
+    for (const auto context : this->info.options)
     {
         std::cout << static_cast<char>('A' + index) << '.' << context << std::endl;
         ++index;
     }
     std::cout << std::endl;
-    if (!this->hint.empty())
+    if (!this->info.hint.empty())
     {
-        std::cout << "ℹ️ 提示：" << hint << std::endl << std::endl;
+        std::cout << "ℹ️ 提示：" << info.hint << std::endl << std::endl;
     }
     bool is_correct = false;
     while (true)
     {
         std::cout << "输入你的答案：";
         auto user_input = read();
+        user_input.erase(std::remove_if(user_input.begin(), user_input.end(), [](auto ch) { return std::isspace(ch); }),
+                         user_input.end());
         if (user_input.length() >= 1)
         {
-            char user_ans = user_input[0];
-            if (std::toupper(user_ans) == this->answer)
+            std::transform(user_input.begin(), user_input.end(), user_input.begin(),
+                           [](auto ch) { return std::toupper(ch); });
+            std::sort(user_input.begin(), user_input.end());
+            if (user_input == this->info.answer)
             {
                 is_correct = true;
                 std::cout << "✅ 正确" << std::endl << std::endl;
@@ -97,9 +96,9 @@ void MCQ::run()
             break;
         }
     }
-    if (!this->solution.empty())
+    if (!this->info.solution.empty())
     {
-        std::cout << "📝 解析：" << this->solution << std::endl << std::endl;
+        std::cout << "📝 解析：" << this->info.solution << std::endl << std::endl;
     }
 }
 

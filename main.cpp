@@ -8,14 +8,10 @@ int main()
     InteractTester tester{"测试章节"};
 
     // 选择题样例
-    MCQ q1;
-    q1.set_question("2 ^ 3 + 2 ^ 0 = ?");
-    q1.add_option("9", true);
-    q1.add_option("8");
-    q1.add_option("1");
-    q1.set_hint("x ^ 0 = 1");
-    q1.set_solution("2 ^ 3 = 8, 2 ^ 0 = 1, 8 + 1 = 9");
-    tester.add(std::move(q1));
+    tester.add({"Which of the following functions or classes can be used for printing (multiple choice)?",
+                {{"std::cout", true}, {"printf", true}, {"std::cin", false}},
+                "x ^ 0 = 1",
+                "2 ^ 3 = 8, 2 ^ 0 = 1, 8 + 1 = 9"});
 
     // 阅读代码题样例
     CRP q2{R"(#include <iostream>

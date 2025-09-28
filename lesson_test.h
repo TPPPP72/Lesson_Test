@@ -13,21 +13,22 @@ std::string read();
 class MCQ
 {
   public:
-    MCQ() = default;
+    MCQ() = delete;
+    MCQ(std::string_view question, std::vector<std::pair<std::string_view, bool>> &&options, std::string_view hint,
+        std::string_view solution);
     ~MCQ() = default;
-    void set_question(std::string_view text);                       // 设置问题
-    void add_option(std::string_view text, bool is_answer = false); // 添加选项
-    void set_hint(std::string_view text);
-    void set_solution(std::string_view text);
 
   private:
+    struct Info
+    {
+        std::string question;
+        std::vector<std::string> options;
+        std::string answer;
+        std::string hint;
+        std::string solution;
+    };
     void run();
-    std::string question;
-    std::vector<std::string> options;
-    std::string hint;
-    std::string solution;
-    char answer;
-    int index = 0;
+    Info info;
     friend class InteractTester;
 };
 
