@@ -35,25 +35,25 @@ class MCQ
 class CRP
 {
   public:
-    CRP() = default;
+    CRP() = delete;
+    CRP(std::string_view source_code);
     ~CRP() = default;
-    void set_origin_code(std::string_view text);                 // 设置展示给测试者的代码
-    void set_input(std::string_view text);                       // 设置输入
-    void set_real_output(const std::function<void()> &function); // 设置真实的输出
-    void set_real_output(std::string_view text);                 // 设置真实的输出（重载）
-    void set_hint(std::string_view text);                        // 设置提示
-    void set_solution(std::string_view text);                    // 设置解析
+    void add(std::string_view input, std::string_view answer, std::string_view hint, std::string_view solution);
+    void add(std::string_view input, const std::function<void()> &answer, std::string_view hint,
+             std::string_view solution);
 
   private:
-    void test();                                // 用于测试的函数
-    void run_and_capture();                     // 运行 f ，并捕获真实输出
-    std::vector<std::string> get_real_output(); // 获取实际输出的每一行
-    std::string origin_code;                    // 展示给测试者的代码
-    std::string input;                          // 模拟程序输入
-    std::string answer;                         // 答案
-    std::string hint;                           // 提示
-    std::string solution;                       // 解析
-    std::function<void()> f;                    // 程序内部的代码（请使用 cout 输出）
+    struct Info
+    {
+        std::string input;
+        std::string hint;
+        std::vector<std::string> answer;
+        std::string solution;
+    };
+    void run();
+    std::vector<std::string> get_real_output(std::string_view output);
+    std::string source_code;
+    std::vector<Info> infos;
     friend class InteractTester;
 };
 
@@ -64,9 +64,9 @@ class InteractTester
     InteractTester();                       // 重写 InteractTester 构造函数
     InteractTester(std::string_view title); // 设置测试标题的构造函数
     ~InteractTester() = default;
-    void add(MCQ &mcq); // 添加选择题
-    void add(CRP &crp); // 添加阅读代码题
-    void test();        // 运行测试
+    void add(MCQ &&mcq); // 添加选择题
+    void add(CRP &&crp); // 添加阅读代码题
+    void run();          // 运行测试
 
   private:
     enum class question_type

@@ -103,49 +103,44 @@ void MCQ::test()
     }
 }
 
-void CRP::set_origin_code(std::string_view text)
+CRP::CRP(std::string_view source_code)
 {
-    this->origin_code = text;
+    this->source_code = source_code;
 }
 
-void CRP::set_input(std::string_view text)
+void CRP::add(std::string_view input, std::string_view answer, std::string_view hint = "",
+              std::string_view solution = "")
 {
-    this->input = text;
+    Info info;
+    info.input = std::string{input};
+    info.answer = this->get_real_output(answer);
+    info.hint = std::string{hint};
+    info.solution = std::string{solution};
+
+    this->infos.emplace_back(std::move(info));
 }
 
-void CRP::set_solution(std::string_view text)
+void CRP::add(std::string_view input, const std::function<void()> &answer, std::string_view hint = "",
+              std::string_view solution = "")
 {
-    this->solution = text;
-}
+    Info info;
+    info.input = std::string{input};
 
-void CRP::set_hint(std::string_view text)
-{
-    this->hint = text;
-}
-
-void CRP::set_real_output(const std::function<void()> &function)
-{
-    this->f = function;
-    this->run_and_capture();
-}
-
-void CRP::set_real_output(std::string_view text)
-{
-    this->answer = text;
-}
-
-void CRP::run_and_capture()
-{
     std::ostringstream oss;
     std::streambuf *oldBuf = std::cout.rdbuf(oss.rdbuf());
-    this->f();
+    answer();
     std::cout.rdbuf(oldBuf);
-    this->answer = oss.str();
+    info.answer = this->get_real_output(oss.str());
+
+    info.hint = std::string{hint};
+    info.solution = std::string{solution};
+
+    this->infos.emplace_back(std::move(info));
 }
 
-std::vector<std::string> CRP::get_real_output()
+std::vector<std::string> CRP::get_real_output(std::string_view output)
 {
-    std::istringstream iss(answer);
+    std::istringstream iss(std::string{output});
     std::vector<std::string> realLines;
     std::string line;
     while (std::getline(iss, line))
@@ -155,56 +150,58 @@ std::vector<std::string> CRP::get_real_output()
     return realLines;
 }
 
-void CRP::test()
+void CRP::run()
 {
-    auto real = get_real_output();
-
-    int attempt = 1;
-    while (true)
+    std::cout << "源代码：" << std::endl;
+    std::cout << this->source_code << std::endl << std::endl;
+    for (auto info : this->infos)
     {
-        std::cout << "源代码：" << std::endl;
-        std::cout << this->origin_code << std::endl << std::endl;
-
-        if (!this->input.empty())
+        int attempt = 1;
+        while (true)
         {
-            std::cout << "输入：" << std::endl;
-            std::cout << input << std::endl << std::endl;
-        }
-
-        if (!this->hint.empty())
-        {
-            std::cout << "ℹ️ 提示：" << hint << std::endl << std::endl;
-        }
-
-        std::cout << "程序应该输出：" << std::endl;
-
-        bool allCorrect = true;
-        for (size_t i = 0; i < real.size(); ++i)
-        {
-            std::cout << "第 " << (i + 1) << " 行: ";
-            auto user_ans = read();
-            if (user_ans == real[i])
+            if (!info.input.empty())
             {
-                std::cout << "✅ 正确" << std::endl << std::endl;
+                std::cout << "输入：" << std::endl;
+                std::cout << info.input << std::endl << std::endl;
             }
-            else
+
+            if (!info.hint.empty())
             {
-                std::cout << "❌ 错误" << std::endl << std::endl;
-                allCorrect = false;
+                std::cout << "ℹ️ 提示：" << info.hint << std::endl << std::endl;
+            }
+
+            std::cout << "程序应该输出：" << std::endl;
+
+            bool allCorrect = true;
+            for (size_t i = 0; i < info.answer.size(); ++i)
+            {
+                std::cout << "第 " << (i + 1) << " 行: ";
+                auto user_ans = read();
+                if (user_ans == info.answer[i])
+                {
+                    std::cout << "✅ 正确" << std::endl << std::endl;
+                }
+                else
+                {
+                    std::cout << "❌ 错误" << std::endl << std::endl;
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            if (allCorrect)
+            {
+                std::cout << "全部正确！共 " << info.answer.size() << " 行，尝试次数：" << attempt << std::endl
+                          << std::endl;
                 break;
             }
+            ++attempt;
         }
 
-        if (allCorrect)
+        if (!info.solution.empty())
         {
-            std::cout << "全部正确！共 " << real.size() << " 行，尝试次数：" << attempt << std::endl << std::endl;
-            break;
+            std::cout << "📝 解析：" << info.solution << std::endl << std::endl;
         }
-        ++attempt;
-    }
-    if (!this->solution.empty())
-    {
-        std::cout << "📝 解析：" << this->solution << std::endl << std::endl;
     }
 }
 
@@ -238,21 +235,21 @@ InteractTester::InteractTester(std::string_view title)
     this->title = title;
 }
 
-void InteractTester::add(MCQ &mcq)
+void InteractTester::add(MCQ &&mcq)
 {
     this->mcq.emplace_back(std::move(mcq));
     type_vector.emplace_back(question_type::MCQ);
     ++this->question_number;
 }
 
-void InteractTester::add(CRP &crp)
+void InteractTester::add(CRP &&crp)
 {
     this->crp.emplace_back(std::move(crp));
     type_vector.emplace_back(question_type::CRP);
     ++this->question_number;
 }
 
-void InteractTester::test()
+void InteractTester::run()
 {
     if (!this->title.empty())
     {
@@ -271,7 +268,7 @@ void InteractTester::test()
         }
         else
         {
-            this->crp[crp_index].test();
+            this->crp[crp_index].run();
             ++crp_index;
         }
         ++id;
