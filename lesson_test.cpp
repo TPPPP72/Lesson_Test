@@ -50,7 +50,7 @@ void MCQ::add_option(std::string_view text, bool is_answer)
     ++this->index;
 }
 
-void MCQ::test()
+void MCQ::run()
 {
     if (this->answer == 0)
     {
@@ -113,7 +113,7 @@ void CRP::add(std::string_view input, std::string_view answer, std::string_view 
 {
     Info info;
     info.input = std::string{input};
-    info.answer = this->get_real_output(answer);
+    info.answer = this->split(answer);
     info.hint = std::string{hint};
     info.solution = std::string{solution};
 
@@ -130,7 +130,7 @@ void CRP::add(std::string_view input, const std::function<void()> &answer, std::
     std::streambuf *oldBuf = std::cout.rdbuf(oss.rdbuf());
     answer();
     std::cout.rdbuf(oldBuf);
-    info.answer = this->get_real_output(oss.str());
+    info.answer = this->split(oss.str());
 
     info.hint = std::string{hint};
     info.solution = std::string{solution};
@@ -138,7 +138,7 @@ void CRP::add(std::string_view input, const std::function<void()> &answer, std::
     this->infos.emplace_back(std::move(info));
 }
 
-std::vector<std::string> CRP::get_real_output(std::string_view output)
+std::vector<std::string> CRP::split(std::string_view output)
 {
     std::istringstream iss(std::string{output});
     std::vector<std::string> realLines;
@@ -263,7 +263,7 @@ void InteractTester::run()
         auto type = this->query(id);
         if (type == question_type::MCQ)
         {
-            this->mcq[mcq_index].test();
+            this->mcq[mcq_index].run();
             ++mcq_index;
         }
         else

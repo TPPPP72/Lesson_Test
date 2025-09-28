@@ -17,17 +17,17 @@ class MCQ
     ~MCQ() = default;
     void set_question(std::string_view text);                       // 设置问题
     void add_option(std::string_view text, bool is_answer = false); // 添加选项
-    void set_hint(std::string_view text);                           // 设置提示
-    void set_solution(std::string_view text);                       // 设置解析
+    void set_hint(std::string_view text);
+    void set_solution(std::string_view text);
 
   private:
-    void test();                      // 用于测试的函数
-    std::string question;             // 问题
-    std::vector<std::string> options; // 选项
-    std::string hint;                 // 提示
-    std::string solution;             // 解析
-    char answer;                      // 答案
-    int index = 0;                    // 选项偏移值
+    void run();
+    std::string question;
+    std::vector<std::string> options;
+    std::string hint;
+    std::string solution;
+    char answer;
+    int index = 0;
     friend class InteractTester;
 };
 
@@ -51,7 +51,7 @@ class CRP
         std::string solution;
     };
     void run();
-    std::vector<std::string> get_real_output(std::string_view output);
+    std::vector<std::string> split(std::string_view output);
     std::string source_code;
     std::vector<Info> infos;
     friend class InteractTester;
