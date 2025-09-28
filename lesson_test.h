@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace Lesson_Test
+namespace lesson_test
 {
 // 读入 1 行输入 自动去除末尾 \t \n (space)
 std::string read();
@@ -39,9 +39,10 @@ class CRP
     CRP() = delete;
     CRP(std::string_view source_code);
     ~CRP() = default;
-    void add(std::string_view input, std::string_view answer, std::string_view hint, std::string_view solution);
-    void add(std::string_view input, const std::function<void()> &answer, std::string_view hint,
-             std::string_view solution);
+    void add(std::string_view input, std::string_view answer, std::string_view hint = "",
+             std::string_view solution = "");
+    void add(std::string_view input, const std::function<void()> &answer, std::string_view hint = "",
+             std::string_view solution = "");
 
   private:
     struct Info
@@ -70,19 +71,19 @@ class InteractTester
     void run();          // 运行测试
 
   private:
-    enum class question_type
+    enum class QuestionType
     {
         MCQ,
         CRP
     };
-    std::string title;                      // 测试标题
-    void set_console_utf8();                // 设置控制台编码为 UTF-8
-    question_type query(int id);            // 通过题目编号查询题目类型
-    std::vector<MCQ> mcq;                   // 存储mcq
-    std::vector<CRP> crp;                   // 存储crp
-    std::vector<question_type> type_vector; // 存储每个编号的题目类型
-    int question_number;                    // 存储题目总数
-    int mcq_index = 0;                      // mcq题目的下标
-    int crp_index = 0;                      // crp题目的下标
+    std::string title;                     // 测试标题
+    void set_console_utf8();               // 设置控制台编码为 UTF-8
+    QuestionType query(int id);            // 通过题目编号查询题目类型
+    std::vector<MCQ> mcq;                  // 存储mcq
+    std::vector<CRP> crp;                  // 存储crp
+    std::vector<QuestionType> type_vector; // 存储每个编号的题目类型
+    int question_number;                   // 存储题目总数
+    int mcq_index = 0;                     // mcq题目的下标
+    int crp_index = 0;                     // crp题目的下标
 };
-}; // namespace Lesson_Test
+}; // namespace lesson_test

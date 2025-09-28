@@ -7,7 +7,7 @@
 #include <windows.h>
 #endif
 
-namespace Lesson_Test
+namespace lesson_test
 {
 
 std::string read()
@@ -107,8 +107,7 @@ CRP::CRP(std::string_view source_code)
     this->source_code = source_code;
 }
 
-void CRP::add(std::string_view input, std::string_view answer, std::string_view hint = "",
-              std::string_view solution = "")
+void CRP::add(std::string_view input, std::string_view answer, std::string_view hint, std::string_view solution)
 {
     Info info;
     info.input = std::string{input};
@@ -119,8 +118,8 @@ void CRP::add(std::string_view input, std::string_view answer, std::string_view 
     this->infos.emplace_back(std::move(info));
 }
 
-void CRP::add(std::string_view input, const std::function<void()> &answer, std::string_view hint = "",
-              std::string_view solution = "")
+void CRP::add(std::string_view input, const std::function<void()> &answer, std::string_view hint,
+              std::string_view solution)
 {
     Info info;
     info.input = std::string{input};
@@ -212,7 +211,7 @@ void InteractTester::set_console_utf8()
 #endif
 }
 
-InteractTester::question_type InteractTester::query(int id)
+InteractTester::QuestionType InteractTester::query(int id)
 {
     return type_vector[id - 1];
 }
@@ -237,14 +236,14 @@ InteractTester::InteractTester(std::string_view title)
 void InteractTester::add(MCQ &&mcq)
 {
     this->mcq.emplace_back(std::move(mcq));
-    type_vector.emplace_back(question_type::MCQ);
+    type_vector.emplace_back(QuestionType::MCQ);
     ++this->question_number;
 }
 
 void InteractTester::add(CRP &&crp)
 {
     this->crp.emplace_back(std::move(crp));
-    type_vector.emplace_back(question_type::CRP);
+    type_vector.emplace_back(QuestionType::CRP);
     ++this->question_number;
 }
 
@@ -260,7 +259,7 @@ void InteractTester::run()
     {
         std::cout << "第 " << id << " 题：" << std::endl << std::endl;
         auto type = this->query(id);
-        if (type == question_type::MCQ)
+        if (type == QuestionType::MCQ)
         {
             this->mcq[mcq_index].run();
             ++mcq_index;
@@ -276,4 +275,4 @@ void InteractTester::run()
     std::cin.get();
 }
 
-} // namespace Lesson_Test
+} // namespace lesson_test

@@ -3,7 +3,7 @@
 
 int main()
 {
-    using namespace Lesson_Test;
+    using namespace lesson_test;
 
     InteractTester tester{"测试章节"};
 
