@@ -9,6 +9,12 @@ namespace lesson_test
 // 读入 1 行输入 自动去除末尾 \t \n (space)
 std::string read();
 
+enum class TestMode
+{
+    practice,
+    examination
+};
+
 // MCQ = Mutiple Choices Question 选择题
 class MCQ
 {
@@ -27,7 +33,7 @@ class MCQ
         std::string hint;
         std::string solution;
     };
-    void run();
+    bool run(TestMode mode = TestMode::practice);
     Info info;
     friend class InteractTester;
 };
@@ -52,7 +58,7 @@ class CRP
         std::vector<std::string> answer;
         std::string solution;
     };
-    void run();
+    double run(TestMode mode = TestMode::practice);
     std::vector<std::string> split(std::string_view output);
     std::string source_code;
     std::vector<Info> infos;
@@ -66,9 +72,9 @@ class InteractTester
     InteractTester();                       // 重写 InteractTester 构造函数
     InteractTester(std::string_view title); // 设置测试标题的构造函数
     ~InteractTester() = default;
-    void add(MCQ &&mcq); // 添加选择题
-    void add(CRP &&crp); // 添加阅读代码题
-    void run();          // 运行测试
+    void add(MCQ &&mcq);                          // 添加选择题
+    void add(CRP &&crp);                          // 添加阅读代码题
+    void run(TestMode mode = TestMode::practice); // 运行测试
 
   private:
     enum class QuestionType

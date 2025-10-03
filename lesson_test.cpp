@@ -45,13 +45,8 @@ MCQ::MCQ(std::string_view question, std::vector<std::pair<std::string_view, bool
     this->info.solution = std::string{solution};
 }
 
-void MCQ::run()
+bool MCQ::run(TestMode mode)
 {
-    if (this->info.answer.empty())
-    {
-        std::cout << "严重错误：未设定答案选项" << std::endl;
-        return;
-    }
     std::cout << this->info.question << std::endl << std::endl;
     std::cout << "选项：" << std::endl;
     std::size_t index = 0;
@@ -66,6 +61,7 @@ void MCQ::run()
         std::cout << "ℹ️ 提示：" << info.hint << std::endl << std::endl;
     }
     bool is_correct = false;
+    bool has_input = false;
     while (true)
     {
         std::cout << "输入你的答案：";
@@ -74,15 +70,19 @@ void MCQ::run()
                          user_input.end());
         if (user_input.length() >= 1)
         {
+            has_input = true;
             std::transform(user_input.begin(), user_input.end(), user_input.begin(),
                            [](auto ch) { return std::toupper(ch); });
             std::sort(user_input.begin(), user_input.end());
             if (user_input == this->info.answer)
             {
                 is_correct = true;
-                std::cout << "✅ 正确" << std::endl << std::endl;
+                if (mode == TestMode::practice)
+                {
+                    std::cout << "✅ 正确" << std::endl << std::endl;
+                }
             }
-            else
+            else if (mode == TestMode::practice)
             {
                 std::cout << "❌ 错误" << std::endl << std::endl;
             }
@@ -90,6 +90,11 @@ void MCQ::run()
         else
         {
             std::cout << "你没有输入任何字符" << std::endl << std::endl;
+        }
+        if (mode == TestMode::examination && has_input)
+        {
+            std::cout << std::endl;
+            return is_correct;
         }
         if (is_correct)
         {
@@ -100,6 +105,7 @@ void MCQ::run()
     {
         std::cout << "📝 解析：" << this->info.solution << std::endl << std::endl;
     }
+    return true;
 }
 
 CRP::CRP(std::string_view source_code)
@@ -148,10 +154,12 @@ std::vector<std::string> CRP::split(std::string_view output)
     return realLines;
 }
 
-void CRP::run()
+double CRP::run(TestMode mode)
 {
     std::cout << "源代码：" << std::endl;
     std::cout << this->source_code << std::endl << std::endl;
+    int test_group_number = this->infos.size();
+    int pass_number = 0;
     for (auto info : this->infos)
     {
         int attempt = 1;
@@ -177,14 +185,29 @@ void CRP::run()
                 auto user_ans = read();
                 if (user_ans == info.answer[i])
                 {
-                    std::cout << "✅ 正确" << std::endl << std::endl;
+                    if (mode == TestMode::practice)
+                    {
+                        std::cout << "✅ 正确" << std::endl << std::endl;
+                    }
                 }
                 else
                 {
-                    std::cout << "❌ 错误" << std::endl << std::endl;
+                    if (mode == TestMode::practice)
+                    {
+                        std::cout << "❌ 错误" << std::endl << std::endl;
+                    }
                     allCorrect = false;
                     break;
                 }
+            }
+            if (mode == TestMode::examination)
+            {
+                std::cout << std::endl;
+                if (allCorrect)
+                {
+                    ++pass_number;
+                }
+                break;
             }
 
             if (allCorrect)
@@ -198,9 +221,13 @@ void CRP::run()
 
         if (!info.solution.empty())
         {
-            std::cout << "📝 解析：" << info.solution << std::endl << std::endl;
+            if (mode == TestMode::practice)
+            {
+                std::cout << "📝 解析：" << info.solution << std::endl << std::endl;
+            }
         }
     }
+    return static_cast<double>(pass_number) / test_group_number;
 }
 
 void InteractTester::set_console_utf8()
@@ -247,7 +274,7 @@ void InteractTester::add(CRP &&crp)
     ++this->question_number;
 }
 
-void InteractTester::run()
+void InteractTester::run(TestMode mode)
 {
     if (!this->title.empty())
     {
@@ -261,12 +288,14 @@ void InteractTester::run()
         auto type = this->query(id);
         if (type == QuestionType::MCQ)
         {
-            this->mcq[mcq_index].run();
+            auto result = this->mcq[mcq_index].run(mode);
+            // std::cout << std::boolalpha << result << std::endl;
             ++mcq_index;
         }
         else
         {
-            this->crp[crp_index].run();
+            auto result = this->crp[crp_index].run(mode);
+            // std::cout << result << std::endl;
             ++crp_index;
         }
         ++id;
