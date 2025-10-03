@@ -281,6 +281,8 @@ void InteractTester::run(TestMode mode)
         std::cout << "😀 欢迎来到 " << title << " 测试程序!" << std::endl;
     }
     std::cout << "本次测试共有 " << question_number << " 道题目" << std::endl << std::endl;
+    int average_score = 100 / question_number;
+    int real_score = 0;
     int id = 1;
     while (id <= this->question_number)
     {
@@ -289,18 +291,39 @@ void InteractTester::run(TestMode mode)
         if (type == QuestionType::MCQ)
         {
             auto result = this->mcq[mcq_index].run(mode);
-            // std::cout << std::boolalpha << result << std::endl;
+            if (id != this->question_number)
+            {
+                real_score += result * average_score;
+            }
+            else
+            {
+                real_score += result * (100 - (this->question_number - 1) * average_score);
+            }
             ++mcq_index;
         }
         else
         {
             auto result = this->crp[crp_index].run(mode);
-            // std::cout << result << std::endl;
+            if (id != this->question_number)
+            {
+                real_score += result * average_score;
+            }
+            else
+            {
+                real_score += result * (100 - (this->question_number - 1) * average_score);
+            }
             ++crp_index;
         }
         ++id;
     }
-    std::cout << "🎉 恭喜通过所有测试！ 按回车键退出程序" << std::endl;
+    if (mode == TestMode::practice)
+    {
+        std::cout << "🎉 恭喜通过所有测试！ 按回车键退出程序" << std::endl;
+    }
+    else
+    {
+        std::cout << "🎉 恭喜完成考试！ 得分：" << real_score << " 分 按回车键退出程序" << std::endl;
+    }
     std::cin.get();
 }
 
