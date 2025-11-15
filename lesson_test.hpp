@@ -85,9 +85,32 @@ class CRP : public base_question
         std::vector<std::string> answer;
         std::string solution;
     };
-    std::vector<std::string> split(std::string_view output);
+    std::vector<std::string> split(std::string_view output) const;
     std::string source_code;
     std::vector<test_info> infos;
+    void test() const override;
+};
+
+class ICP : public base_question
+{
+  public:
+    ICP() = delete;
+    ICP(unsigned char *zip, unsigned int size, std::string_view path, std::string_view key);
+    ~ICP() = default;
+    ICP(const ICP &) = delete;
+    ICP(ICP &&) = delete;
+
+  private:
+    struct test_info
+    {
+        unsigned char *data;
+        unsigned int size;
+        std::string path;
+        std::string key;
+    };
+    test_info info;
+    void write_zip() const;
+    void unzip() const;
     void test() const override;
 };
 

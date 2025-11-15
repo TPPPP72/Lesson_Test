@@ -1,6 +1,9 @@
 #include "lesson_test.hpp"
+#include "zip/miniz.h"
 #include <algorithm>
 #include <cstdint>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -131,7 +134,7 @@ void CRP::add(std::string_view input, const std::function<void()> &answer, std::
     this->infos.emplace_back(std::move(info));
 }
 
-std::vector<std::string> CRP::split(std::string_view output)
+std::vector<std::string> CRP::split(std::string_view output) const
 {
     std::istringstream iss{std::string{output}};
     std::vector<std::string> realLines;
@@ -208,6 +211,69 @@ void CRP::test() const
     }
     score_percent = static_cast<double>(pass_number) / test_group_number;
     return;
+}
+
+ICP::ICP(unsigned char *zip, unsigned int size, std::string_view path, std::string_view key)
+{
+    info.data = zip;
+    info.size = size;
+    info.path = std::string{path};
+    info.key = std::string{path};
+}
+
+void ICP::write_zip() const
+{
+    std::ofstream f(info.path, std::ios::binary);
+    f.write((const char *)info.data, info.size);
+}
+
+void ICP::unzip() const
+{
+    mz_zip_archive zip{};
+    mz_zip_zero_struct(&zip);
+    mz_zip_reader_init_file(&zip, info.path.c_str(), 0);
+    int file_count = (int)mz_zip_reader_get_num_files(&zip);
+    for (int i = 0; i < file_count; i++)
+    {
+        mz_zip_archive_file_stat st;
+        mz_zip_reader_file_stat(&zip, i, &st);
+        std::string out_path = std::string{"./"} + st.m_filename;
+        if (st.m_is_directory)
+        {
+            std::filesystem::create_directories(out_path);
+        }
+        else
+        {
+            std::filesystem::create_directories(std::filesystem::path(out_path).parent_path());
+            mz_zip_reader_extract_to_file(&zip, i, out_path.c_str(), 0);
+        }
+    }
+    mz_zip_reader_end(&zip);
+}
+
+void ICP::test() const
+{
+    while (true)
+    {
+        std::cout << "输入你获取到的key：";
+        auto user_input = read();
+        if (user_input.empty())
+        {
+            std::cout << "你没有输入任何字符" << std::endl << std::endl;
+            continue;
+        }
+        if (user_input == info.key)
+            this->score_percent = 1;
+        if (type == test_type::examination)
+            break;
+        if (this->score_percent == 1)
+        {
+            std::cout << "✅ 正确" << std::endl << std::endl;
+            break;
+        }
+        else
+            std::cout << "❌ 错误" << std::endl << std::endl;
+    }
 }
 
 void interact_tester::set_console_utf8()
