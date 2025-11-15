@@ -1,5 +1,6 @@
-#include "lesson_test.h"
+#include "lesson_test.hpp"
 #include <algorithm>
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 
@@ -31,25 +32,23 @@ MCQ::MCQ(std::string_view question, std::vector<std::pair<std::string_view, bool
          std::string_view solution)
 {
     this->info.question = std::string{question};
-    std::size_t index = 0;
+    std::uint32_t index{0};
     for (const auto &[text, is_answer] : options)
     {
         this->info.options.emplace_back(std::string{text});
         if (is_answer)
-        {
             this->info.answer += static_cast<char>('A' + index);
-        }
         ++index;
     }
     this->info.hint = std::string{hint};
     this->info.solution = std::string{solution};
 }
 
-bool MCQ::run(TestMode mode)
+void MCQ::test() const
 {
     std::cout << this->info.question << std::endl << std::endl;
     std::cout << "选项：" << std::endl;
-    std::size_t index = 0;
+    std::size_t index{0};
     for (const auto context : this->info.options)
     {
         std::cout << static_cast<char>('A' + index) << '.' << context << std::endl;
@@ -57,11 +56,9 @@ bool MCQ::run(TestMode mode)
     }
     std::cout << std::endl;
     if (!this->info.hint.empty())
-    {
         std::cout << "ℹ️ 提示：" << info.hint << std::endl << std::endl;
-    }
-    bool is_correct = false;
-    bool has_input = false;
+    bool is_correct{false};
+    bool has_input{false};
     while (true)
     {
         std::cout << "输入你的答案：";
@@ -77,12 +74,10 @@ bool MCQ::run(TestMode mode)
             if (user_input == this->info.answer)
             {
                 is_correct = true;
-                if (mode == TestMode::practice)
-                {
+                if (this->type == test_type::practice)
                     std::cout << "✅ 正确" << std::endl << std::endl;
-                }
             }
-            else if (mode == TestMode::practice)
+            else if (this->type == test_type::practice)
             {
                 std::cout << "❌ 错误" << std::endl << std::endl;
             }
@@ -91,21 +86,19 @@ bool MCQ::run(TestMode mode)
         {
             std::cout << "你没有输入任何字符" << std::endl << std::endl;
         }
-        if (mode == TestMode::examination && has_input)
+        if (type == test_type::examination && has_input)
         {
             std::cout << std::endl;
-            return is_correct;
+            score_percent = 0;
+            return;
         }
         if (is_correct)
-        {
             break;
-        }
     }
     if (!this->info.solution.empty())
-    {
         std::cout << "📝 解析：" << this->info.solution << std::endl << std::endl;
-    }
-    return true;
+    score_percent = 1;
+    return;
 }
 
 CRP::CRP(std::string_view source_code)
@@ -115,36 +108,32 @@ CRP::CRP(std::string_view source_code)
 
 void CRP::add(std::string_view input, std::string_view answer, std::string_view hint, std::string_view solution)
 {
-    Info info;
+    test_info info;
     info.input = std::string{input};
     info.answer = this->split(answer);
     info.hint = std::string{hint};
     info.solution = std::string{solution};
-
     this->infos.emplace_back(std::move(info));
 }
 
 void CRP::add(std::string_view input, const std::function<void()> &answer, std::string_view hint,
               std::string_view solution)
 {
-    Info info;
+    test_info info;
     info.input = std::string{input};
-
     std::ostringstream oss;
     std::streambuf *oldBuf = std::cout.rdbuf(oss.rdbuf());
     answer();
     std::cout.rdbuf(oldBuf);
     info.answer = this->split(oss.str());
-
     info.hint = std::string{hint};
     info.solution = std::string{solution};
-
     this->infos.emplace_back(std::move(info));
 }
 
 std::vector<std::string> CRP::split(std::string_view output)
 {
-    std::istringstream iss(std::string{output});
+    std::istringstream iss{std::string{output}};
     std::vector<std::string> realLines;
     std::string line;
     while (std::getline(iss, line))
@@ -154,15 +143,15 @@ std::vector<std::string> CRP::split(std::string_view output)
     return realLines;
 }
 
-double CRP::run(TestMode mode)
+void CRP::test() const
 {
     std::cout << "源代码：" << std::endl;
     std::cout << this->source_code << std::endl << std::endl;
-    int test_group_number = this->infos.size();
-    int pass_number = 0;
+    std::uint64_t test_group_number{this->infos.size()};
+    std::int32_t pass_number{0};
     for (auto info : this->infos)
     {
-        int attempt = 1;
+        std::int32_t attempt{1};
         while (true)
         {
             if (!info.input.empty())
@@ -172,45 +161,37 @@ double CRP::run(TestMode mode)
             }
 
             if (!info.hint.empty())
-            {
                 std::cout << "ℹ️ 提示：" << info.hint << std::endl << std::endl;
-            }
 
             std::cout << "程序应该输出：" << std::endl;
 
-            bool allCorrect = true;
+            bool all_correct{true};
             for (size_t i = 0; i < info.answer.size(); ++i)
             {
                 std::cout << "第 " << (i + 1) << " 行: ";
                 auto user_ans = read();
                 if (user_ans == info.answer[i])
                 {
-                    if (mode == TestMode::practice)
-                    {
+                    if (this->type == test_type::practice)
                         std::cout << "✅ 正确" << std::endl << std::endl;
-                    }
                 }
                 else
                 {
-                    if (mode == TestMode::practice)
-                    {
+                    if (this->type == test_type::practice)
                         std::cout << "❌ 错误" << std::endl << std::endl;
-                    }
-                    allCorrect = false;
+                    all_correct = false;
                     break;
                 }
             }
-            if (mode == TestMode::examination)
+            if (type == test_type::examination)
             {
                 std::cout << std::endl;
-                if (allCorrect)
-                {
+                if (all_correct)
                     ++pass_number;
-                }
                 break;
             }
 
-            if (allCorrect)
+            if (all_correct)
             {
                 std::cout << "全部正确！共 " << info.answer.size() << " 行，尝试次数：" << attempt << std::endl
                           << std::endl;
@@ -221,16 +202,15 @@ double CRP::run(TestMode mode)
 
         if (!info.solution.empty())
         {
-            if (mode == TestMode::practice)
-            {
+            if (type == test_type::practice)
                 std::cout << "📝 解析：" << info.solution << std::endl << std::endl;
-            }
         }
     }
-    return static_cast<double>(pass_number) / test_group_number;
+    score_percent = static_cast<double>(pass_number) / test_group_number;
+    return;
 }
 
-void InteractTester::set_console_utf8()
+void interact_tester::set_console_utf8()
 {
 #if _WIN32
     SetConsoleCP(CP_UTF8);
@@ -238,92 +218,46 @@ void InteractTester::set_console_utf8()
 #endif
 }
 
-InteractTester::QuestionType InteractTester::query(int id)
-{
-    return type_vector[id - 1];
-}
-
-InteractTester::InteractTester()
+interact_tester::interact_tester()
 {
 #if _WIN32
     this->set_console_utf8();
 #endif
-    this->question_number = 0;
 }
 
-InteractTester::InteractTester(std::string_view title)
+interact_tester::interact_tester(std::string_view title)
 {
 #if _WIN32
     this->set_console_utf8();
 #endif
-    this->question_number = 0;
     this->title = std::string{title};
 }
 
-void InteractTester::add(MCQ &&mcq)
+void interact_tester::add(base_question *question)
 {
-    this->mcq.emplace_back(std::move(mcq));
-    type_vector.emplace_back(QuestionType::MCQ);
-    ++this->question_number;
+    this->question_list.emplace_back(question);
 }
 
-void InteractTester::add(CRP &&crp)
-{
-    this->crp.emplace_back(std::move(crp));
-    type_vector.emplace_back(QuestionType::CRP);
-    ++this->question_number;
-}
-
-void InteractTester::run(TestMode mode)
+void interact_tester::run(test_type type)
 {
     if (!this->title.empty())
     {
         std::cout << "😀 欢迎来到 " << title << " 测试程序!" << std::endl;
     }
-    std::cout << "本次测试共有 " << question_number << " 道题目" << std::endl << std::endl;
-    int average_score = 100 / question_number;
-    int real_score = 0;
-    int id = 1;
-    while (id <= this->question_number)
+    std::cout << "本次测试共有 " << question_list.size() << " 道题目" << std::endl << std::endl;
+    std::uint64_t average_score{100 / question_list.size()};
+    std::int32_t real_score{0};
+    std::int32_t id{0};
+    for (const auto question : question_list)
     {
-        std::cout << "第 " << id << " 题：" << std::endl << std::endl;
-        auto type = this->query(id);
-        if (type == QuestionType::MCQ)
-        {
-            auto result = this->mcq[mcq_index].run(mode);
-            if (id != this->question_number)
-            {
-                real_score += result * average_score;
-            }
-            else
-            {
-                real_score += result * (100 - (this->question_number - 1) * average_score);
-            }
-            ++mcq_index;
-        }
-        else
-        {
-            auto result = this->crp[crp_index].run(mode);
-            if (id != this->question_number)
-            {
-                real_score += result * average_score;
-            }
-            else
-            {
-                real_score += result * (100 - (this->question_number - 1) * average_score);
-            }
-            ++crp_index;
-        }
-        ++id;
+        std::cout << "第 " << ++id << " 题：" << std::endl << std::endl;
+        question->test();
+        real_score += question->score_percent * average_score;
     }
-    if (mode == TestMode::practice)
-    {
+    if (type == test_type::practice)
         std::cout << "🎉 恭喜通过所有测试！ 按回车键退出程序" << std::endl;
-    }
     else
-    {
         std::cout << "🎉 恭喜完成考试！ 得分：" << real_score << " 分 按回车键退出程序" << std::endl;
-    }
     std::cin.get();
 }
 
