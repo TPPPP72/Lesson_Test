@@ -1,6 +1,5 @@
 #pragma once
 
-#include "base_question.hpp"
 #include <functional>
 #include <string>
 #include <vector>
@@ -9,6 +8,29 @@ namespace lesson_test
 {
 // 读入 1 行输入 自动去除末尾 \t \n (space)
 std::string read();
+
+// 测试类型
+enum class test_type
+{
+    practice,
+    examination
+};
+
+// 问题基类
+class base_question
+{
+  public:
+    base_question() = default;
+    virtual ~base_question() = default;
+
+  private:
+    virtual void test() const = 0;
+    friend class interact_tester;
+
+  protected:
+    test_type type{test_type::practice};
+    mutable double score_percent{0};
+};
 
 // MCQ = Mutiple Choices Question 选择题
 class MCQ : public base_question
@@ -76,6 +98,8 @@ class interact_tester
     interact_tester();                       // 重写 interact_tester 构造函数
     interact_tester(std::string_view title); // 设置测试标题的构造函数
     ~interact_tester() = default;
+    interact_tester(const interact_tester &&) = delete;
+    interact_tester(interact_tester &&) = delete;
     void add(base_question *question);              // 添加题目
     void run(test_type type = test_type::practice); // 运行测试
 
